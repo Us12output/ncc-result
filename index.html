@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B CERT Result 2026 — 86 UP BN NCC</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Noto+Sans:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --olive: #4a5c2f;
+      --olive-dark: #2f3d1a;
+      --olive-light: #6b7c45;
+      --gold: #c9a84c;
+      --gold-light: #e8c97a;
+      --cream: #f5f0e8;
+      --khaki: #d4c9a8;
+      --red-grade: #c0392b;
+      --green-grade: #1a6b35;
+      --blue-grade: #1a4a6b;
+      --text-dark: #1a1a1a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Noto Sans', sans-serif;
+      background-color: #1e2410;
+      background-image:
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 1px, transparent 1px, transparent 10px),
+        repeating-linear-gradient(-45deg, rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 1px, transparent 1px, transparent 10px);
+      min-height: 100vh;
+      color: var(--text-dark);
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(135deg, var(--olive-dark) 0%, var(--olive) 60%, var(--olive-light) 100%);
+      border-bottom: 4px solid var(--gold);
+      padding: 20px 30px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    .emblem {
+      width: 64px;
+      height: 64px;
+      background: var(--gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--olive-dark);
+      flex-shrink: 0;
+      border: 3px solid var(--gold-light);
+      box-shadow: 0 0 0 3px rgba(201,168,76,0.3);
+    }
+
+    .header-text h1 {
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--gold-light);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+
+    .header-text p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      margin-top: 2px;
+      letter-spacing: 1px;
+    }
+
+    .header-right {
+      margin-left: auto;
+      text-align: right;
+    }
+
+    .header-right .badge {
+      background: var(--gold);
+      color: var(--olive-dark);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+    }
+
+    /* ── CONTROLS ── */
+    .controls {
+      background: var(--cream);
+      border-bottom: 2px solid var(--khaki);
+      padding: 14px 30px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 200px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 9px 14px 9px 38px;
+      border: 2px solid var(--khaki);
+      border-radius: 6px;
+      font-family: 'Noto Sans', sans-serif;
+      font-size: 14px;
+      background: #fff;
+      color: var(--text-dark);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus { border-color: var(--olive-light); }
+
+    .search-icon {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+      font-size: 15px;
+    }
+
+    .filter-btn {
+      padding: 9px 18px;
+      border: 2px solid;
+      border-radius: 6px;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 1px;
+    }
+
+    .filter-btn.all    { border-color: var(--olive); color: var(--olive); background: transparent; }
+    .filter-btn.aye    { border-color: var(--green-grade); color: var(--green-grade); background: transparent; }
+    .filter-btn.bee    { border-color: var(--blue-grade); color: var(--blue-grade); background: transparent; }
+    .filter-btn.cee    { border-color: var(--red-grade); color: var(--red-grade); background: transparent; }
+
+    .filter-btn.all.active    { background: var(--olive); color: #fff; }
+    .filter-btn.aye.active    { background: var(--green-grade); color: #fff; }
+    .filter-btn.bee.active    { background: var(--blue-grade); color: #fff; }
+    .filter-btn.cee.active    { background: var(--red-grade); color: #fff; }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      background: var(--olive-dark);
+      padding: 10px 30px;
+      display: flex;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      color: rgba(255,255,255,0.8);
+      font-size: 13px;
+      font-family: 'Rajdhani', sans-serif;
+      letter-spacing: 0.5px;
+    }
+
+    .stat strong {
+      color: var(--gold-light);
+      font-size: 16px;
+      margin-right: 4px;
+    }
+
+    /* ── LOADING ── */
+    #loading {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--khaki);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 18px;
+      letter-spacing: 2px;
+    }
+
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 4px solid rgba(201,168,76,0.3);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── TABLE WRAPPER ── */
+    .table-wrapper {
+      overflow-x: auto;
+      padding: 20px 20px 40px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 900px;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+
+    thead tr {
+      background: var(--olive-dark);
+    }
+
+    thead th {
+      color: var(--gold-light);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 13px 14px;
+      text-align: left;
+      border-right: 1px solid rgba(255,255,255,0.08);
+      white-space: nowrap;
+    }
+
+    thead th:last-child { border-right: none; }
+
+    tbody tr {
+      border-bottom: 1px solid #e8e2d4;
+      transition: background 0.15s;
+    }
+
+    tbody tr:hover { background: #f5f0e0; }
+    tbody tr:nth-child(even) { background: #faf7f0; }
+    tbody tr:nth-child(even):hover { background: #f0ebe0; }
+
+    tbody td {
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #333;
+      border-right: 1px solid #e0dac8;
+    }
+
+    tbody td:last-child { border-right: none; }
+
+    td.srl { color: #888; font-size: 12px; width: 40px; text-align: center; }
+    td.name { font-weight: 600; color: var(--olive-dark); }
+    td.certno { font-family: monospace; font-size: 12px; color: #666; }
+
+    .grade-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 1px;
+    }
+
+    .grade-AYE { background: #d4edda; color: var(--green-grade); }
+    .grade-BEE { background: #d1e4f5; color: var(--blue-grade); }
+    .grade-CEE { background: #fde8e6; color: var(--red-grade); }
+
+    .no-results {
+      text-align: center;
+      padding: 60px;
+      color: var(--khaki);
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 18px;
+      letter-spacing: 2px;
+    }
+
+    /* ── INSTITUTION GROUP HEADER ── */
+    .inst-row td {
+      background: var(--olive);
+      color: var(--gold-light);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 7px 14px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="emblem">NCC</div>
+  <div class="header-text">
+    <h1>B Certificate Exam Result — 2026</h1>
+    <p>86 UP BN NCC, SAHARANPUR &nbsp;|&nbsp; LUCKNOW (UP) DIRECTORATE &nbsp;|&nbsp; MEERUT GP HQ</p>
+  </div>
+  <div class="header-right">
+    <span class="badge">ARMY WING</span>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Search by Name, Regt No, Cert No, Institution...">
+  </div>
+  <button class="filter-btn all active" onclick="setGrade('ALL')">All</button>
+  <button class="filter-btn aye" onclick="setGrade('AYE')">Grade A (AYE)</button>
+  <button class="filter-btn bee" onclick="setGrade('BEE')">Grade B (BEE)</button>
+  <button class="filter-btn cee" onclick="setGrade('CEE')">Grade C (CEE)</button>
+</div>
+
+<div class="stats-bar" id="statsBar">
+  <div class="stat"><strong id="statTotal">—</strong> Total Cadets</div>
+  <div class="stat"><strong id="statAYE" style="color:#6fcf97">—</strong> Grade A</div>
+  <div class="stat"><strong id="statBEE" style="color:#7eb8e8">—</strong> Grade B</div>
+  <div class="stat"><strong id="statCEE" style="color:#eb8f87">—</strong> Grade C</div>
+  <div class="stat"><strong id="statShowing">—</strong> Showing</div>
+</div>
+
+<div id="loading">
+  <div class="spinner"></div>
+  LOADING RESULT DATA...
+</div>
+
+<div class="table-wrapper" id="tableWrapper" style="display:none;">
+  <table id="mainTable">
+    <thead>
+      <tr>
+        <th>SRL</th>
+        <th>REGT NO</th>
+        <th>RANK</th>
+        <th>NAME</th>
+        <th>FATHER'S NAME</th>
+        <th>DATE OF BIRTH</th>
+        <th>GRADING</th>
+        <th>CERT NO</th>
+        <th>INSTITUTION</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+  <div id="noResults" class="no-results" style="display:none;">NO RECORDS FOUND</div>
+</div>
+<br><br><br><br>
+<footer>
+  <center><h2>&copy: us12output</h2></center></footer>
+
+<script>
+  let allData = [];
+  let currentGrade = 'ALL';
+
+  // Load the xlsx file — change filename below if needed
+  fetch('d.xlsx')
+    .then(res => {
+      if (!res.ok) throw new Error('File not found');
+      return res.arrayBuffer();
+    })
+    .then(data => {
+      const wb = XLSX.read(data);
+      const sheet = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+      parseRows(rows);
+    })
+    .catch(err => {
+      document.getElementById('loading').innerHTML =
+        `<div style="color:#eb8f87;font-family:Rajdhani,sans-serif;font-size:16px;letter-spacing:2px;">
+          ⚠️ Could not load file.<br>
+          <small style="font-size:13px;color:#aaa;letter-spacing:1px;">
+            Make sure <b>_sorted__RESULT_OF__B__CERT.xlsx</b> is in the same folder as this HTML file.
+          </small>
+        </div>`;
+    });
+
+  function parseRows(rows) {
+    // Find header row by looking for 'SRL NO.' or 'NAME IN ENGLISH'
+    let headerIdx = -1;
+    for (let i = 0; i < rows.length; i++) {
+      const r = rows[i].join(' ');
+      if (r.includes('SRL NO') || r.includes('NAME IN ENGLISH')) {
+        headerIdx = i;
+        break;
+      }
+    }
+    if (headerIdx === -1) headerIdx = 0;
+
+    const headers = rows[headerIdx].map(h => String(h || '').trim().toUpperCase());
+
+    const get = (row, ...keys) => {
+      for (const k of keys) {
+        const idx = headers.findIndex(h => h.includes(k));
+        if (idx !== -1 && row[idx] !== undefined) return String(row[idx]).trim();
+      }
+      return '';
+    };
+
+    const parsed = [];
+    for (let i = headerIdx + 1; i < rows.length; i++) {
+      const row = rows[i];
+      if (!row || row.length < 5) continue;
+      const srl = get(row, 'SRL');
+      const name = get(row, 'NAME IN ENGLISH');
+      const grade = get(row, 'GRADING');
+      if (!name || !grade || ['AYE','BEE','CEE'].indexOf(grade.toUpperCase()) === -1) continue;
+
+      parsed.push({
+        srl:     srl,
+        regtno:  get(row, 'REGTL', 'REGT'),
+        rank:    get(row, 'RANK'),
+        name:    name,
+        fname:   get(row, "FATHER'S NAME IN ENGLISH"),
+        dob:     get(row, 'DATE OF BIRTH'),
+        grade:   grade.toUpperCase(),
+        certno:  get(row, 'CERT NO'),
+        inst:    get(row, 'INSTITUTION'),
+      });
+    }
+
+    allData = parsed;
+    updateStats(parsed);
+    render();
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('tableWrapper').style.display = 'block';
+  }
+
+  function updateStats(data) {
+    const aye = data.filter(d => d.grade === 'AYE').length;
+    const bee = data.filter(d => d.grade === 'BEE').length;
+    const cee = data.filter(d => d.grade === 'CEE').length;
+    document.getElementById('statTotal').textContent = allData.length;
+    document.getElementById('statAYE').textContent = aye;
+    document.getElementById('statBEE').textContent = bee;
+    document.getElementById('statCEE').textContent = cee;
+  }
+
+  function setGrade(grade) {
+    currentGrade = grade;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.filter-btn.${grade.toLowerCase() === 'all' ? 'all' : grade.toLowerCase()}`).classList.add('active');
+    render();
+  }
+
+  function render() {
+    const q = document.getElementById('searchInput').value.toLowerCase().trim();
+    let data = allData;
+
+    if (currentGrade !== 'ALL') data = data.filter(d => d.grade === currentGrade);
+    if (q) data = data.filter(d =>
+      d.name.toLowerCase().includes(q) ||
+      d.regtno.toLowerCase().includes(q) ||
+      d.certno.toLowerCase().includes(q) ||
+      d.inst.toLowerCase().includes(q) ||
+      d.fname.toLowerCase().includes(q)
+    );
+
+    document.getElementById('statShowing').textContent = data.length;
+
+    const tbody = document.getElementById('tableBody');
+    if (data.length === 0) {
+      tbody.innerHTML = '';
+      document.getElementById('noResults').style.display = 'block';
+      return;
+    }
+    document.getElementById('noResults').style.display = 'none';
+
+    // Group by institution
+    const groups = {};
+    data.forEach(d => {
+      const key = d.inst || 'UNKNOWN';
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(d);
+    });
+
+    let html = '';
+    Object.keys(groups).sort().forEach(inst => {
+      html += `<tr class="inst-row"><td colspan="9">${inst}</td></tr>`;
+      groups[inst].forEach(d => {
+        html += `<tr>
+          <td class="srl">${d.srl}</td>
+          <td style="font-size:12px;font-family:monospace">${d.regtno}</td>
+          <td style="font-size:12px">${d.rank}</td>
+          <td class="name">${d.name}</td>
+          <td style="color:#555">${d.fname}</td>
+          <td style="font-size:12px;color:#777">${d.dob}</td>
+          <td><span class="grade-badge grade-${d.grade}">${d.grade}</span></td>
+          <td class="certno">${d.certno}</td>
+          <td style="font-size:12px;color:#666">${d.inst}</td>
+        </tr>`;
+      });
+    });
+
+    tbody.innerHTML = html;
+  }
+
+  document.getElementById('searchInput').addEventListener('input', render);
+</script>
+
+</body>
+</html>
